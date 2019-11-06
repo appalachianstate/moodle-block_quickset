@@ -26,7 +26,6 @@ class block_quickset extends block_base {
 
     function init() {
         $this->title = get_string('pluginname', 'block_quickset');
-        $this->cron = 1;
     }
 
     // Only one instance of this block is required
@@ -41,94 +40,61 @@ class block_quickset extends block_base {
 
     function get_content() {
         global $CFG, $COURSE, $USER, $PAGE, $DB;
+        
+        if ($this->content !== null) {
+        	return $this->content;
+        }
+        
+        $this->content = new stdClass;
+        
         $available = 1;
         $unavailable = 0;
-        $this->content = new stdClass;
+        
         $returnurl = "$CFG->wwwroot/course/view.php?id=$COURSE->id";
-        $numsections = $DB->get_field('course_format_options', 'value', array('courseid' => $COURSE->id, 'name' => 'numsections'));
+        //$numsections = $DB->get_field('course_format_options', 'value', array('courseid' => $COURSE->id, 'name' => 'numsections'));
 
-        $context = get_context_instance(CONTEXT_COURSE, $COURSE->id);
+        $context = context_course::instance($COURSE->id);
         if (has_capability('moodle/course:update', $context)) {
-            if ($COURSE->visible == 1) {
-                $students = 'green';
-                $studentschecked = ' checked="checked"';
-                $studentsunchecked = '';
-            } else {
-                $students = 'red';
-                $studentsunchecked = ' checked="checked"';
-                $studentschecked = '';
+            $coursevisible = '';
+            $gradesvisible = '';
+        	if ($COURSE->visible == 1) {
+                $coursevisible = ' selected';
             }
             if ($COURSE->showgrades == 1) {
-                $grades = 'green';
-                $gradeschecked = ' checked="checked"';
-                $gradesunchecked = '';
-            } else {
-                $grades = 'red';
-                $gradesunchecked = ' checked="checked"';
-                $gradeschecked = '';
+                $gradesvisible = ' selected';
             }
+            
             $this->content->text = '<form id="quickset" action="' . $CFG->wwwroot . '/blocks/quickset/edit.php" method="post">'
-                    . '<input type="hidden" value="'.$PAGE->course->id.'" name="courseid" />'
-                    . '<input type="hidden" value="'.sesskey().'" name="sesskey" />'
-                    . '<input type="hidden" value="' . $returnurl . '" name="pageurl"/>'
-                    . '<input type="hidden" value="grader" name="report"/>';
-            $this->content->text .= '<div id="context">'
-                    . '<div class="ynlabel" style="margin-right:0em">Yes | No</div>'
-
-                    . '<div class="setleft ' . $students . '">Students see course?</div>'
-                    . '<div class="setright">'
-                        . '<span class="leftradio">'
-                        . '<input type="radio" name="course" value=' . $available . $studentschecked . ' />'
-                        . '</span>'
-                        . '<span class="rightradio">'
-                        . '<input type="radio" name="course" value=' . $unavailable . $studentsunchecked . ' />'
-                        . '</span>'
-                    . '</div>'
-
-                    . '<div class="setleft ' . $grades . '">Grades visible?</div>'
-                    . '<div>'
-                        . '<span class="leftradio">'
-                        . '<input type="radio" name="grades" value=' . $available . $gradeschecked . ' />'
-                        . '</span>'
-                        . '<span class="rightradio">'
-                        . '<input type="radio" name="grades" value=' . $unavailable . $gradesunchecked . ' />'
-                        . '</span>'
-                    . '</div>'
-
-                    . '<div class="setleft blue toplevel" >Visible sections </div>'
-                    . '<div class="setright">'
-                        . '<input type="text" name="number" size="2" value="'.$numsections.'"/>'
-                    . '</div>'
-
-                    . '<br /><br />'
-
-                    . '<div>'
-                        . '<span class="nodisplay defaultaction">'
-                            . '<input type="submit" name="updatesettings"  value="Update settings">'
-                        . '</span>'
-/*                        . '<span class="noaction">'
-                            . '<input type="submit" name="noaction" value="Edit Sections" >'
-                        . '</span>'
-*/                        . '<span class="updatesettings">'
-                            . '<input type="submit" name="updatesettings"  value="Update settings">'
-                        . '</span>'
-                    . '</div>'
-
-                    . '<br /><br />'
-
-                    . '<div class="textcenter">
-                            <a href="' . $CFG->wwwroot . '/course/edit.php?id=' . $COURSE->id . '"> More Settings </a>
-                            </div>'
-                    . '</div></form>';
-            $this->content->text .= '<div class="smallred">Note: This block invisible to students</div>';
+            		. '<input type="hidden" value="' . $PAGE->course->id . '" name="courseid">'
+            		. '<input type="hidden" value="' . sesskey() . '" name="sesskey">'
+            		. '<input type="hidden" value="' . $returnurl . '" name="pageurl">'
+            		. '<input type="hidden" value="grader" name="report">'
+            		. '<div class="form-group row">'
+            		. '<label for="coursevisible" class="col-sm-8 col-form-label">Students see course</label>'
+            		. '<div class="col-sm-4">'
+            		. '<select class="form-control" id="coursevisible">'
+            		. '<option' . $coursevisible . '>No</option>'
+            		. '<option' . $coursevisible . '>Yes</option>'
+            		. '</select>'
+            		. '</div>'
+            		. '</div>'
+            		. '<div class="form-group row">'
+            		. '<label for="gradesvisible" class="col-sm-8 col-form-label">Students see grades</label>'
+            		. '<div class="col-sm-4">'
+            		. '<select class="form-control" id="gradesvisible">'
+            		. '<option' . $gradesvisible . '>No</option>'
+            				. '<option' . $gradesvisible . '>Yes</option>'
+            		. '</select>'
+            		. '</div>'
+            		. '</div>'
+            		. '<button type="submit" class="btn btn-primary">Submit</button>'
+            		. '</form>'
+            		. '<div>'
+            		. '<a href="' . $CFG->wwwroot . '/course/edit.php?id=' . $COURSE->id . '">More settings</a>'
+            		. '</div>'
+            		.'<div class="small">Note: This block invisible to students.</div>';
         }
         $this->content->footer = '';
         return $this->content;
     }
-
-    function specialisation() {
-        // empty!
-    }
-
-
 }

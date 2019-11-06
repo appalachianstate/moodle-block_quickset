@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 require_once('../../config.php');
-global $COURSE, $PAGE, $OUTPUT;
+global $DB, $COURSE, $PAGE, $OUTPUT;
 
 $courseid = required_param('courseid', PARAM_NUMBER);
 $thispageurl = required_param('pageurl', PARAM_URL); // Always sent as the course page
@@ -36,7 +36,8 @@ add_to_log($courseid, 'block_quickset', 'editsections',
             "edit.php");
 
 // You need mod/section:manage in addition to section capabilities to access this page.
-$context = get_context_instance(CONTEXT_COURSE, $COURSE->id);
+$context = context_course::instance($COURSE->id);
+//$context = get_context_instance(CONTEXT_COURSE, $COURSE->id);
 require_capability('moodle/course:update', $context);
 
 // Process commands ============================================================
