@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Quick settings block lang strings.
+ * Implement Privacy API.
  *
  * @package   block_quickset
  * @author    Michelle Melton <meltonml@appstate.edu>
@@ -23,13 +23,19 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Quickset';
-$string['quickset:addinstance'] = 'Add a new Quickset block';
-$string['quickset:view'] = 'View the Quickset block';
-$string['coursevisible'] = 'Students see course';
-$string['coursevisible_help'] = 'Displays current setting for course visibility. Select new option and click Update settings to modify.';
-$string['gradesvisible'] = 'Students see grades';
-$string['gradesvisible_help'] = 'Displays current setting for gradebook visibility. Select new option and click Update settings to modify.';
-$string['submit'] = 'Update settings';
-$string['note'] = 'Note: This block is invisible to students.';
-$string['privacy:metadata'] = 'The Quickset block only displays existing course settings.';
+namespace block_quickset\privacy;
+
+defined('MOODLE_INTERNAL') || die();
+
+class provider implements \core_privacy\local\metadata\null_provider {
+
+    /**
+     * Get the language string identifier with the component's language
+     * file to explain why this plugin stores no data.
+     *
+     * @return  string
+     */
+    public static function get_reason() : string {
+        return 'privacy:metadata';
+    }
+}

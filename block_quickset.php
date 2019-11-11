@@ -24,7 +24,7 @@
  */
 
 defined('MOODLE_INTERNAL') || die;
-require_once($CFG->dirroot . '/blocks/quickset/classes/update_settings_form.php');
+require_once($CFG->dirroot . '/blocks/quickset/classes/forms/update_settings_form.php');
 
 /**
  * Quickset block functions.
