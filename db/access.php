@@ -15,17 +15,22 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Feedback block caps.
+ * Quick settings block capabilities.
  *
- * @package    block_quickset
- * @copyright  Bob Puffer <puffro01@luther.edu>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   block_quickset
+ * @author    Michelle Melton <meltonml@appstate.edu>
+ * @copyright 2019, Michelle Melton
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
 $capabilities = array(
-
+    'block/quickset:myaddinstance' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array()
+    ),
     'block/quickset:addinstance' => array(
         'riskbitmask' => RISK_SPAM | RISK_XSS,
         'captype' => 'write',
@@ -33,7 +38,8 @@ $capabilities = array(
         'archetypes' => array(
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW
-        )
+        ),
+        'clonepermissionsfrom' => 'moodle/site:manageblocks'
     ),
     'block/quickset:view' => array(
         'captype' => 'read',
@@ -42,6 +48,6 @@ $capabilities = array(
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW
         ),
-    'clonepermissionsfrom' => 'moodle/site:manageblocks'
+        'clonepermissionsfrom' => 'moodle/site:manageblocks'
     )
 );

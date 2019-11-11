@@ -15,16 +15,16 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
+ * Quickset block version information.
  *
- * @package    block
- * @subpackage quickset
- * @copyright  2013 and beyond Bob Puffer (puffro01@luther.edu)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   block_quickset
+ * @author    Michelle Melton <meltonml@appstate.edu>
+ * @copyright 2019, Michelle Melton
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2013062600;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2012120300;        // Requires this Moodle version
-$plugin->component = 'block_quickset';  // Full name of the plugin (used for diagnostics)
+$plugin->version   = 2019110800;        // The current plugin version (Date: YYYYMMDDXX).
+$plugin->requires  = 2018120305;        // Requires this Moodle version.
+$plugin->component = 'block_quickset';  // Full name of the plugin (used for diagnostics).

@@ -1,4 +1,4 @@
-<?PHP
+<?php
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -14,12 +14,21 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-// This is block_quickset.php - created by Bob Puffer CLAMP, Luther College
+/**
+ * Quick settings block lang strings.
+ *
+ * @package   block_quickset
+ * @author    Michelle Melton <meltonml@appstate.edu>
+ * @copyright 2019, Michelle Melton
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
-$string['pluginname'] = 'Quicksets';
-$string['addnewsectionsafterselected'] = 'Add new course section after selected';
-$string['reordersections'] = 'Reorder and/or submit section changes';
-$string['removeselected'] = 'Remove selected';
-$string['areyousureremoveselected'] = 'All resources and modules will be moved to the top (0) section.  Summary information will be discarded';
-$string['editingcoursesections'] = 'Editing sections for course: {$a}';
-$string['returntocourse'] = 'Return to course, discard unsaved changes';
+$string['pluginname'] = 'Quickset';
+$string['quickset:addinstance'] = 'Add a new Quickset block';
+$string['quickset:view'] = 'View the Quickset block';
+$string['coursevisible'] = 'Students see course';
+$string['coursevisible_help'] = 'Displays current setting for course visibility. Select new option and click Update settings to modify.';
+$string['gradesvisible'] = 'Students see grades';
+$string['gradesvisible_help'] = 'Displays current setting for gradebook visibility. Select new option and click Update settings to modify.';
+$string['submit'] = 'Update settings';
+$string['note'] = 'Note: This block is invisible to students.';

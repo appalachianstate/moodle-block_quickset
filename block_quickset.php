@@ -14,87 +14,106 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Quick settings block class.
+ *
+ * @package   block_quickset
+ * @author    Michelle Melton <meltonml@appstate.edu>
+ * @copyright 2019, Michelle Melton
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
-/* Quickset to set most commonly changed course settings
-* as well as rename, rearrange, insert and delete course sections
-* @package quickset
-* @author: Bob Puffer Luther College <puffro01@luther.edu>
-* @date: 2010 ->
-*/
+defined('MOODLE_INTERNAL') || die;
+require_once($CFG->dirroot . '/blocks/quickset/classes/update_settings_form.php');
 
+/**
+ * Quickset block functions.
+ *
+ * @package    block_quickset
+ * @copyright  2019, Michelle Melton
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class block_quickset extends block_base {
 
-    function init() {
+    /**
+     * Initializes block.
+     */
+    public function init() {
         $this->title = get_string('pluginname', 'block_quickset');
     }
 
-    // Only one instance of this block is required
-    function instance_allow_multiple() {
+    /**
+     * Allows only one instance of the block per course.
+     *
+     * @return false
+     */
+    public function instance_allow_multiple() {
         return false;
     }
 
-    // Label and button values can be set in admin
-    function has_config() {
+    /**
+     * There is no configuration for the block.
+     *
+     * @return false
+     */
+    public function has_config() {
         return false;
     }
 
-    function get_content() {
-        global $CFG, $COURSE, $USER, $PAGE, $DB;
-        
+    /**
+     * Displays or processes the Quickset form.
+     * {@inheritDoc}
+     * @see block_base::get_content()
+     *
+     * @return string block content
+     */
+    public function get_content() {
         if ($this->content !== null) {
-        	return $this->content;
+            return $this->content;
         }
-        
+
+        global $CFG, $COURSE, $DB;
+
         $this->content = new stdClass;
-        
-        $available = 1;
-        $unavailable = 0;
-        
-        $returnurl = "$CFG->wwwroot/course/view.php?id=$COURSE->id";
-        //$numsections = $DB->get_field('course_format_options', 'value', array('courseid' => $COURSE->id, 'name' => 'numsections'));
+        $this->content->text = '';
 
         $context = context_course::instance($COURSE->id);
+        $redirect = "$CFG->wwwroot/course/view.php";
+        $urlparams = array('id' => $COURSE->id);
+        $url = new moodle_url($redirect, $urlparams);
         if (has_capability('moodle/course:update', $context)) {
-            $coursevisible = '';
-            $gradesvisible = '';
-        	if ($COURSE->visible == 1) {
-                $coursevisible = ' selected';
+            $updatesettingsform = new update_settings_form($url);
+            if ($fromform = $updatesettingsform->get_data()) {
+                // Process validated data.
+                $course = $DB->get_record('course', array('id' => $COURSE->id));
+                if ($course) {
+                    $course->visible = $fromform->coursevisible;
+                    $course->visibleold = $fromform->coursevisible;
+                    $course->showgrades = $fromform->gradesvisible;
+                    $DB->update_record('course', $course);
+                    redirect($url, get_string('success', 'moodle'), null, \core\output\notification::NOTIFY_SUCCESS);
+                }
+            } else {
+                // Display form first time, or if form is submitted with invalid data.
+                $this->content->text = $updatesettingsform->render();
+                $this->content->text = preg_replace('/col-md-3/', 'col-md-8', $this->content->text, 2);
+                $this->content->text = preg_replace('/col-md-9/', 'col-md-4', $this->content->text, 2);
+                $this->content->text = preg_replace('/col-md-3/', 'col-md-0', $this->content->text, 1);
+                $this->content->text = preg_replace('/col-md-9/', 'col-md-12', $this->content->text, 1);
             }
-            if ($COURSE->showgrades == 1) {
-                $gradesvisible = ' selected';
-            }
-            
-            $this->content->text = '<form id="quickset" action="' . $CFG->wwwroot . '/blocks/quickset/edit.php" method="post">'
-            		. '<input type="hidden" value="' . $PAGE->course->id . '" name="courseid">'
-            		. '<input type="hidden" value="' . sesskey() . '" name="sesskey">'
-            		. '<input type="hidden" value="' . $returnurl . '" name="pageurl">'
-            		. '<input type="hidden" value="grader" name="report">'
-            		. '<div class="form-group row">'
-            		. '<label for="coursevisible" class="col-sm-8 col-form-label">Students see course</label>'
-            		. '<div class="col-sm-4">'
-            		. '<select class="form-control" id="coursevisible">'
-            		. '<option' . $coursevisible . '>No</option>'
-            		. '<option' . $coursevisible . '>Yes</option>'
-            		. '</select>'
-            		. '</div>'
-            		. '</div>'
-            		. '<div class="form-group row">'
-            		. '<label for="gradesvisible" class="col-sm-8 col-form-label">Students see grades</label>'
-            		. '<div class="col-sm-4">'
-            		. '<select class="form-control" id="gradesvisible">'
-            		. '<option' . $gradesvisible . '>No</option>'
-            				. '<option' . $gradesvisible . '>Yes</option>'
-            		. '</select>'
-            		. '</div>'
-            		. '</div>'
-            		. '<button type="submit" class="btn btn-primary">Submit</button>'
-            		. '</form>'
-            		. '<div>'
-            		. '<a href="' . $CFG->wwwroot . '/course/edit.php?id=' . $COURSE->id . '">More settings</a>'
-            		. '</div>'
-            		.'<div class="small">Note: This block invisible to students.</div>';
         }
         $this->content->footer = '';
         return $this->content;
+    }
+
+    /**
+     * Quickset block is only allowed on course view pages.
+     * {@inheritDoc}
+     * @see block_base::applicable_formats()
+     *
+     * @return array allowed page views
+     */
+    public function applicable_formats() {
+        return array('course-view' => true);
     }
 }

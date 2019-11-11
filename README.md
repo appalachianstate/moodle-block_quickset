@@ -1,20 +1,8 @@
-quickset
-========
+The Quickset block allows teachers to quickly view and update the current settings for course and gradebook visibility.
 
-The "Course settings" block (heretofore named, "Quickset") has changed dramatically.  
+# Installation instructions
+Install the plugin according to the [MoodleDocs]https://docs.moodle.org/en/Installing_plugins) as a directory named /quickset in the blocks directory.
 
-NOTES:
-
-1. "Update settings" is the default focus button so <ENTER> will cause that button to be submitted with any changes to:
-Students see course?
-2. Grades visible?
-3. Visible sections
-4. "Edit sections" displays this screen (in screenshots):
-
-Studying this screen you will discover it does everything it appears to do:
-
-- Delete course sections from anywhere in the sequence (if resources exist in that section they will be moved to the "Zero" section -- a warning pops-up to remind you)
-- Add sections in the middle or anywhere else
-- Quickly reorder sections with no clicks and no reliance on how AJAX is feeling today.
-- Edit the names for any of the sections which is particularly handy when first setting up a course (think of the "click savings"
- 
+# Notes
+- The Quickset block is not visible to students.
+- This plugin code was forked from the [moodle-block_quickset](https://github.com/bobpuffer/moodle-block_quickset) repository of Bob Puffer Luther College <puffro01@luther.edu> under http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later. 
