@@ -27,6 +27,13 @@ namespace block_quickset\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Quickset block privacy provider.
+ *
+ * @package    block_quickset
+ * @copyright  2019, Michelle Melton
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class provider implements \core_privacy\local\metadata\null_provider {
 
     /**

@@ -78,11 +78,11 @@ class block_quickset extends block_base {
         $this->content->text = '';
 
         $context = context_course::instance($COURSE->id);
-        $redirect = "$CFG->wwwroot/course/view.php";
+        $url = "$CFG->wwwroot/course/view.php";
         $urlparams = array('id' => $COURSE->id);
-        $url = new moodle_url($redirect, $urlparams);
+        $redirect = new moodle_url($url, $urlparams);
         if (has_capability('moodle/course:update', $context)) {
-            $updatesettingsform = new update_settings_form($url);
+            $updatesettingsform = new update_settings_form($redirect);
             if ($fromform = $updatesettingsform->get_data()) {
                 // Process validated data.
                 $course = $DB->get_record('course', array('id' => $COURSE->id));
@@ -91,7 +91,7 @@ class block_quickset extends block_base {
                     $course->visibleold = $fromform->coursevisible;
                     $course->showgrades = $fromform->gradesvisible;
                     $DB->update_record('course', $course);
-                    redirect($url, get_string('success', 'moodle'), null, \core\output\notification::NOTIFY_SUCCESS);
+                    redirect($redirect, get_string('success', 'moodle'), null, \core\output\notification::NOTIFY_SUCCESS);
                 }
             } else {
                 // Display form first time, or if form is submitted with invalid data.
