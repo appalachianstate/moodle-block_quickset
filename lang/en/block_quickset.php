@@ -25,6 +25,7 @@
 
 $string['pluginname'] = 'Quickset';
 $string['quickset:addinstance'] = 'Add a new Quickset block';
+$string['quickset:myaddinstance'] = 'A  a new Quickset block to the dashboard.';
 $string['quickset:view'] = 'View the Quickset block';
 $string['coursevisible'] = 'Students see course';
 $string['coursevisible_help'] = 'Displays current setting for course visibility. Select new option and click Update settings to modify.';
