@@ -25,11 +25,11 @@
 
 $string['pluginname'] = 'Quickset';
 $string['quickset:addinstance'] = 'Add a new Quickset block';
-$string['quickset:myaddinstance'] = 'A  a new Quickset block to the dashboard.';
+$string['quickset:myaddinstance'] = 'Add a new Quickset block to the dashboard.';
 $string['quickset:view'] = 'View the Quickset block';
 $string['coursevisible'] = 'Students see course';
 $string['coursevisible_help'] = 'Displays current setting for course visibility. Select new option and click Update settings to modify.';
-$string['gradesvisible'] = 'Students see grades';
+$string['gradesvisible'] = 'Students see gradebook';
 $string['gradesvisible_help'] = 'Displays current setting for gradebook visibility. Select new option and click Update settings to modify.';
 $string['submit'] = 'Update settings';
 $string['note'] = 'Note: This block is invisible to students.';
