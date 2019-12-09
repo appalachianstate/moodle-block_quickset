@@ -1,7 +1,5 @@
 <?php
-use core_calendar\local\event\proxies\std_proxy;
-
-// This file is part of Moodle - https://moodle.org/
+// This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +15,7 @@ use core_calendar\local\event\proxies\std_proxy;
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Quick settings block class.
+ * Add quickset block to all courses via CLI.
  *
  * @package   block_quickset
  * @author    Michelle Melton <meltonml@appstate.edu>
@@ -32,19 +30,16 @@ require_once($CFG->libdir.'/clilib.php');
 global $DB;
 
 $usage = "Add the quickset block to the top of all courses.
-        
+
 Usage:
-    # php add_to_courses --paramname=<value>
     # php add_to_courses.php [--help|-h]
-        
+
 Options:
     -h --help               Print this help.
-    --paramname=<value>     Describe the parameter and the meaning of its values.
 ";
 
 list($options, $unrecognised) = cli_get_params([
         'help' => false,
-        'paramname' => null,
 ], [
         'h' => 'help'
 ]);
@@ -59,12 +54,8 @@ if ($options['help']) {
     exit(2);
 }
 
-if (empty($options['paramname'])) {
-    cli_error('Missing mandatory argument paramname.', 2);
-}
-
-if (empty($DB->get_record('block', array('name' => 'quickset')))) {
-    cli_error('Missing mandatory quickset block');
+if (!$DB->get_record('block', array('name' => 'quickset'))) {
+    cli_error('Missing mandatory quickset block.');
 }
 
 // Set up block_instance record.
@@ -80,22 +71,27 @@ $quicksetinstance->timecreated = time();
 $quicksetinstance->timemodified = time();
 
 foreach ($coursecontexts as $coursecontext) {
+    if ($DB->get_record('block_instances', array('parentcontextid' => $coursecontext->id, 'blockname' => 'quickset'))) {
+        cli_problem('Quickset block already exists for course ' . $coursecontext->instanceid);
+        continue;
+    }
+
     $quicksetinstance->parentcontextid = $coursecontext->id;
     $blockinstanceid = $DB->insert_record('block_instances', $quicksetinstance, true);
     if ($blockinstanceid) {
         // Set up block_position record.
-        $quicksetposition = new stdClass();
-        $quicksetposition->blockinstanceid = $blockinstanceid;
-        $quicksetposition->contextid = $coursecontext->id;
         $courseformat = $DB->get_field('course', 'format', array('id' => $coursecontext->instanceid));
         if ($courseformat) {
             $quicksetposition = new stdClass();
+            $quicksetposition->blockinstanceid = $blockinstanceid;
+            $quicksetposition->contextid = $coursecontext->id;
             $quicksetposition->pagetype = 'course-view-' . $courseformat;
             $quicksetposition->subpage = '';
             $quicksetposition->visible = 1;
             $quicksetposition->region = 'side-pre';
             $quicksetposition->weight = -2;
             $DB->insert_record('block_positions', $quicksetposition);
+            unset($quicksetposition);
         }
-    }   
+    }
 }
