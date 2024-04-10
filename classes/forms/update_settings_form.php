@@ -43,15 +43,50 @@ class update_settings_form extends moodleform {
         global $CFG, $COURSE;
         $mform = $this->_form;
 
-        $mform->addElement('selectyesno', 'coursevisible', get_string('coursevisible', 'block_quickset'));
-        $mform->setDefault('coursevisible', $COURSE->visible);
-        $mform->addHelpButton('coursevisible', 'coursevisible', 'block_quickset');
+        $context = context_course::instance($COURSE->id);
+        $coursevisiblecap = has_capability('moodle/course:visibility', $context);
+        $gradesvisiblecap = has_capability('moodle/grade:hide', $context);
 
-        $mform->addElement('selectyesno', 'gradesvisible', get_string('gradesvisible', 'block_quickset'));
-        $mform->setDefault('gradesvisible', $COURSE->showgrades);
-        $mform->addHelpButton('gradesvisible', 'gradesvisible', 'block_quickset');
+        if ($coursevisiblecap) {
+            $mform->addElement('selectyesno', 'coursevisible', get_string('coursevisible', 'block_quickset'));
+            $mform->setDefault('coursevisible', $COURSE->visible);
+            $mform->addHelpButton('coursevisible', 'coursevisible', 'block_quickset');
+        } else {
+            switch ($COURSE->visible) {
+                case 0:
+                    $staticfield = get_string('checkboxno', 'admin');
+                    break;
+                case 1:
+                    $staticfield = get_string('checkboxyes', 'admin');
+                    break;
+            }
+            $mform->addElement('static', 'coursevisible', get_string('coursevisible', 'block_quickset'),
+                $staticfield);
+            $mform->addHelpButton('coursevisible', 'coursevisible', 'block_quickset');
+        }
 
-        $this->add_action_buttons(false, get_string('submit', 'block_quickset'));
+        if ($gradesvisiblecap) {
+            $mform->addElement('selectyesno', 'gradesvisible', get_string('gradesvisible', 'block_quickset'));
+            $mform->setDefault('gradesvisible', $COURSE->showgrades);
+            $mform->addHelpButton('gradesvisible', 'gradesvisible', 'block_quickset');
+        } else {
+            switch ($COURSE->showgrades) {
+                case 0:
+                    $staticfield = get_string('checkboxno', 'admin');
+                    break;
+                case 1:
+                    $staticfield = get_string('checkboxyes', 'admin');
+                    break;
+            }
+            $mform->addElement('static', 'gradesvisible', get_string('gradesvisible', 'block_quickset'),
+                $staticfield);
+            $mform->addHelpButton('gradesvisible', 'gradesvisible', 'block_quickset');
+        }
+
+        if ($coursevisiblecap || $gradesvisiblecap) {
+            $this->add_action_buttons(false, get_string('submit', 'block_quickset'));
+        }
+
         $mform->addElement('html', '<div><a href=' . $CFG->wwwroot . '/course/edit.php?id=' . $COURSE->id . '>' .
             get_string('editsettings', 'moodle') . '</a></div>');
         $mform->addElement('html', '<div class="small">' . get_string('note', 'block_quickset') . '</div>');
