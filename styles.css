@@ -7,3 +7,7 @@
 #fitem_id_submitbutton .col-md-12 {
     padding-left: 0;
 }
+
+.block_quickset .row {
+	margin-left: initial;
+}
