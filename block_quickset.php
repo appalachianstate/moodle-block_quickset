@@ -87,13 +87,13 @@ class block_quickset extends block_base {
                 // Process validated data.
                 $course = $DB->get_record('course', array('id' => $COURSE->id));
                 if ($course) {
-                    if (property_exists($fromform, 'coursevisible')) {
+                    if (property_exists($fromform, 'coursevisible') && $course->visible != $fromform->coursevisible) {
                         course_change_visibility($course->id, $fromform->coursevisible);
                     }
 
-                    if (property_exists($fromform, 'gradesvisible')) {
+                    if (property_exists($fromform, 'gradesvisible') && $course->showgrades != $fromform->gradesvisible) {
                         $course->showgrades = $fromform->gradesvisible;
-                        $DB->set_field('course', 'showgrades', $fromform->gradesvisible);
+                        update_course($course);
                     }
 
                     redirect($redirect, get_string('success', 'moodle'), null, \core\output\notification::NOTIFY_SUCCESS);
