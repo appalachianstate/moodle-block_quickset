@@ -89,6 +89,8 @@ class block_quickset extends block_base {
                 if ($course) {
                     if (property_exists($fromform, 'coursevisible') && $course->visible != $fromform->coursevisible) {
                         course_change_visibility($course->id, $fromform->coursevisible);
+                        $course->visible = $fromform->coursevisible;
+                        $course->visibleold = $fromform->coursevisible;
                     }
 
                     if (property_exists($fromform, 'gradesvisible') && $course->showgrades != $fromform->gradesvisible) {
